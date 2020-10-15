@@ -9,7 +9,7 @@
       <div v-for="(item,index) of data" :key="index"
         :style="{
           'text-align': 'center',
-          'marginTop': (resolutionHeight - dataDecorator[index].calculatedHeightPercent * resolutionHeight) + 'px'
+          'marginTop': (chartHeight - dataDecorator[index].calculatedHeightPercent * chartHeight) + 'px'
         }"
       >
         <div>
@@ -24,7 +24,7 @@
           display: 'flex',
           'marginLeft': (widthColumn/2)+'px',
           'marginRight': (widthColumn/2)+'px',
-          height: (dataDecorator[index].calculatedHeightPercent * resolutionHeight) + 'px',
+          height: (dataDecorator[index].calculatedHeightPercent * chartHeight) + 'px',
           }"
         ></div>         
       </div>
@@ -54,8 +54,10 @@ export default {
   data() {
     return {
        columnSize: this.data.length,
-       resolutionWidth: null,
-       resolutionHeight: null,
+       windowWidth: 0,
+       windowHeight: 0,
+       chartWidth: null,
+       chartHeight: null,
        widthColumn: null,
 
     }
@@ -73,7 +75,23 @@ export default {
         this.dataDecorator[i] = {};
         this.dataDecorator[i].calculatedHeightPercent = parseFloat(this.data[i].value/max)
       }
-    }
+    },
+
+
+      getWindowWidth(event) {
+        this.windowWidth = document.documentElement.clientWidth;
+      },
+
+      getWindowHeight(event) {
+        this.windowHeight = document.documentElement.clientHeight;
+      },
+
+      drawChart(){
+        this.chartWidth = this.windowWidth - 200;
+        this.chartHeight = this.windowHeight - 200;
+        this.widthColumn = this.chartWidth / (this.columnSize * 2);
+        this.calculateHeight();
+      }
   },
   computed: {
     dataDecorator: function(){
@@ -92,27 +110,34 @@ export default {
     }
   },
   mounted() {
-    this.resolutionWidth = window.innerWidth - 200;
-    this.resolutionHeight = window.innerHeight - 200;
-    this.widthColumn = this.resolutionWidth / (this.columnSize * 2);
-    this.calculateHeight();
+    this.$nextTick(function() {
+      window.addEventListener('resize', this.getWindowWidth);
+      window.addEventListener('resize', this.getWindowHeight);
+
+      //Init
+      this.getWindowWidth()
+      this.getWindowHeight()
+    })
+
+    this.drawChart();
   },
   watch: {
-    dataDecorator: {
-      immediate: true,
-      handler(newVal, oldVal) {
-        //this.widthColumn = this.resolutionWidth / (this.columnSize * 2);
-        this.calculateHeight();
-      }
+    windowWidth: function(){
+      this.drawChart();
+    },
+    windowHeight: function(){
+      this.drawChart();
     }
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.getWindowWidth);
+    window.removeEventListener('resize', this.getWindowHeight);
   }
 };
 </script>
 
 <style lang="scss" scoped>
 .chart__item {
-  //height: 100px;
-  //width: 100px;
   position: relative;
 }
 .chart__header {
