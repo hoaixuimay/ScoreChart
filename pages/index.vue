@@ -7,6 +7,7 @@
         <input type="text" v-model="sub.color">
       </div>
     </div>
+    <br/>
     <chart :data="data"></chart>
   </div>
 </template>
