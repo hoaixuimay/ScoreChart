@@ -5,7 +5,23 @@
     </div>
     
     <div class="chart__content">
-      <div class="chart__y"></div>
+      <div class="chart__y">
+        <div class="chart__y--value">
+          <div class="value" :style="{height: (chartHeight/5) + 'px'}">{{maxValue}}</div>
+          <div class="value" :style="{height: (chartHeight/5) + 'px'}">{{4*maxValue/5}}</div>
+          <div class="value" :style="{height: (chartHeight/5) + 'px'}">{{3*maxValue/5}}</div>
+          <div class="value" :style="{height: (chartHeight/5) + 'px'}">{{2*maxValue/5}}</div>
+          <div class="value" :style="{height: (chartHeight/5) + 'px'}">{{maxValue/5}}</div>
+        </div>
+        <div class="chart__y--mark">
+          <div class="mark" :style="{height: (chartHeight/5) + 'px'}"></div>
+          <div class="mark" :style="{height: (chartHeight/5) + 'px'}"></div>
+          <div class="mark" :style="{height: (chartHeight/5) + 'px'}"></div>
+          <div class="mark" :style="{height: (chartHeight/5) + 'px'}"></div>
+          <div class="mark" :style="{height: (chartHeight/5) + 'px'}"></div>
+        </div>
+        <div></div>
+      </div>
       <div v-for="(item,index) of data" :key="index"
         :style="{
           'text-align': 'center',
@@ -59,6 +75,7 @@ export default {
        chartWidth: null,
        chartHeight: null,
        widthColumn: null,
+       maxValue: null,
 
     }
   },
@@ -101,6 +118,7 @@ export default {
           max = this.data[i].value;
         }
       }
+      this.maxValue = max;
       var dataDecorate = {};
       for(let i=0; i < this.data.length; i++){
         dataDecorate[i] = {};
@@ -150,16 +168,45 @@ export default {
 .chart__y {
   border: 1px;
   border-color: black;
-  width: 1px;
+  width: 50px;
   border-style: solid;
   margin-left: 50px;
+  display: flex;
+
+  border-top: 0px;
+    border-left: 0px;
+    border-bottom: 0px;
+
+  &--mark {
+    width: 20px;
+    .mark {
+      border: 1px;
+      border-color: black;
+      border-style: solid;
+      border-right: 0px;
+      border-left: 0px;
+      border-bottom: 0px;
+    }
+  }
+  &--value {
+    width: 30px;
+    .value {
+      border: 1px;
+      border-color: black;
+      border-style: solid;
+      border-right: 0px;
+      border-left: 0px;
+      border-bottom: 0px;
+    }
+  }
+
 }
 .chart__x {
   border: 1px;
     border-color: black;
     height: 1px;
     border-style: solid;
-    margin-left: 50px;
+    margin-left: 100px;
     display: flex;
     text-align: center;
 }
